@@ -4,6 +4,7 @@ import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import dotenv from "dotenv";
 import crypto from "crypto";
+import { GoogleGenAI } from "@google/genai";
 
 dotenv.config();
 
@@ -11,6 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const USERNAME = process.env.APP_USERNAME || "studentnurse";
 const PASSWORD = process.env.APP_PASSWORD || "ilovedora";
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
 app.use(express.json({ limit: "400kb" }));
 app.use(helmet());
@@ -50,6 +52,20 @@ function cleanArray(arr, itemLimit = 300, maxItems = 10) {
     .slice(0, maxItems);
 }
 
+function sanitizeMedications(meds) {
+  if (!Array.isArray(meds)) return [];
+  return meds.slice(0, 20).map(med => ({
+    name: cleanText(med?.name, 120),
+    dose: cleanText(med?.dose, 80),
+    route: cleanText(med?.route, 60),
+    frequency: cleanText(med?.frequency, 80),
+    time: cleanText(med?.time, 80),
+    type: cleanText(med?.type, 40)
+  })).filter(m =>
+    m.name || m.dose || m.route || m.frequency || m.time || m.type
+  );
+}
+
 function validateCaseInput(body) {
   if (!body) {
     return { ok: false, error: "Missing request body" };
@@ -63,6 +79,7 @@ function validateCaseInput(body) {
       chiefComplaint: cleanText(body.chiefComplaint, 300),
       admittingDiagnosis: cleanText(body.admittingDiagnosis, 300),
       history: cleanText(body.history, 1500),
+      patientReceivedCondition: cleanText(body.patientReceivedCondition, 1200),
       subjectiveData: cleanText(body.subjectiveData, 2000),
       objectiveData: cleanText(body.objectiveData, 2000),
       temperature: cleanText(body.temperature, 50),
@@ -70,13 +87,13 @@ function validateCaseInput(body) {
       heartRate: cleanText(body.heartRate, 50),
       respiratoryRate: cleanText(body.respiratoryRate, 50),
       oxygenSaturation: cleanText(body.oxygenSaturation, 50),
-      medications: Array.isArray(body.medications) ? body.medications.slice(0, 20) : []
+      medications: sanitizeMedications(body.medications)
     }
   };
 }
 
 app.get("/health", (_req, res) => {
-  res.json({ ok: true, aiReady: true });
+  res.json({ ok: true, aiReady: Boolean(process.env.GEMINI_API_KEY) });
 });
 
 app.post("/login", (req, res) => {
@@ -112,24 +129,27 @@ app.post("/generate-ncp", authMiddleware, aiLimiter, async (req, res) => {
     const prompt = `
 You are assisting with an educational nursing care plan.
 
-Follow these rules strictly:
-1. Use only the data provided.
+STRICT RULES:
+1. Use only the provided data.
 2. Do not invent unsupported facts.
-3. Generate TOP 3 possible NANDA nursing diagnoses in order of best fit.
-4. Each diagnosis must be nursing-style and clinically grounded.
-5. Select ONE primary diagnosis from the top 3.
-6. When supported by the case, write the primary diagnosis in this form:
+3. Understand common medical abbreviations in nursing objective data and interpret them carefully in context.
+4. Generate TOP 3 possible NANDA nursing diagnoses in order of best fit.
+5. Each diagnosis must be nursing-style and clinically grounded.
+6. Select ONE primary diagnosis from the top 3.
+7. When supported by the case, write the primary diagnosis in this style:
    "Problem related to [related factors] secondary to [condition if clearly supported] as evidenced by [signs/symptoms/cues]"
-7. If "secondary to" is not supported, omit it.
-8. If "as evidenced by" is not supported, omit it.
-9. Provide NOC outcomes and NIC interventions.
-10. Provide implementation suggestions based on the case and listed medications, but do not prescribe new medications.
-11. Short-term goal must begin exactly with:
+8. If "secondary to" is not supported, omit it.
+9. If "as evidenced by" is not supported, omit it.
+10. Provide NOC outcomes and NIC interventions.
+11. Goals must be SMART, realistic, measurable, and appropriate to the case.
+12. Short-term goal must begin exactly with:
    "At the end of the 8 hour shift..."
-12. Long-term goal must begin exactly with:
+13. Long-term goal must begin exactly with:
    "After"
-13. Return VALID JSON only.
-14. No markdown. No code fences.
+14. NIC interventions and implementation suggestions must be phrased in PAST TENSE, as if already carried out by the nurse.
+15. If medications are listed by the nurse, you may mention medication administration/monitoring/documentation only as already performed nursing actions, not as new prescriptions.
+16. Return VALID JSON only.
+17. No markdown. No code fences.
 
 JSON keys must be exactly:
 topDiagnoses
@@ -141,7 +161,7 @@ implementationSuggestions
 shortTermGoal
 longTermGoal
 
-Value rules:
+VALUE RULES:
 - topDiagnoses: array of exactly 3 strings
 - primaryDiagnosis: string
 - rationaleNotes: string
@@ -151,39 +171,31 @@ Value rules:
 - shortTermGoal: string
 - longTermGoal: string
 
-Clinical data:
+DE-IDENTIFIED CLINICAL DATA:
 ${JSON.stringify(clinicalData, null, 2)}
 `;
 
-    const response = await fetch("http://127.0.0.1:11434/api/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "llama3.2:3b",
-        prompt,
-        stream: false,
-        format: "json"
-      })
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: prompt,
+      config: {
+        temperature: 0.15,
+        responseMimeType: "application/json"
+      }
     });
 
-    if (!response.ok) {
-      const text = await response.text();
-      return res.status(500).json({ error: `Local AI generation failed: ${text}` });
-    }
-
-    const data = await response.json();
-    const parsed = JSON.parse(data.response || "{}");
+    const text = (response.text || "").trim();
+    const parsed = JSON.parse(text);
 
     let topDiagnoses = cleanArray(parsed.topDiagnoses, 260, 3);
 
     if (topDiagnoses.length < 3) {
       const primary = cleanText(parsed.primaryDiagnosis, 500);
-      const fallback1 = primary || "Review assessment cues for a primary NANDA diagnosis";
-      const fallback2 = "Risk for complications related to current clinical condition";
-      const fallback3 = "Further focused assessment may support another NANDA diagnosis";
-      topDiagnoses = [fallback1, fallback2, fallback3].slice(0, 3);
+      topDiagnoses = [
+        primary || "Review assessment cues for a primary NANDA diagnosis",
+        "Risk for complications related to current clinical condition",
+        "Further focused assessment may support another NANDA diagnosis"
+      ].slice(0, 3);
     }
 
     let primaryDiagnosis = cleanText(parsed.primaryDiagnosis || topDiagnoses[0], 800);
@@ -202,9 +214,9 @@ ${JSON.stringify(clinicalData, null, 2)}
       longTermGoal: cleanText(parsed.longTermGoal, 900)
     });
   } catch (error) {
-    console.error("Local AI error:", error);
+    console.error("Gemini error:", error);
     res.status(500).json({
-      error: error?.message || "Local AI generation failed"
+      error: error?.message || "Gemini generation failed"
     });
   }
 });

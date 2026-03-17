@@ -263,7 +263,7 @@
     }
 
     .summary-table th {
-      width: 28%;
+      width: 26%;
       background: #f7fbf8;
     }
 
@@ -306,126 +306,147 @@
       font-size: 0.95rem;
     }
 
+    .signature-section {
+      margin-top: 26px;
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+    }
+
+    .signature-box {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .signature-name {
+      min-height: 20px;
+      margin-bottom: 24px;
+      font-weight: bold;
+    }
+
+    .signature-line {
+      border-top: 1px solid #000;
+      margin-top: 22px;
+      width: 100%;
+    }
+
+    .signature-label {
+      font-size: 12px;
+      margin-top: 5px;
+    }
+
     @media (max-width: 900px) {
       .grid, .grid-3 { grid-template-columns: 1fr; }
       .brandbar { flex-direction: column; align-items: stretch; }
+      .signature-section { flex-direction: column; }
     }
 
     @media print {
-  @page {
-    size: A4;
-    margin: 14mm;
-  }
+      @page {
+        size: A4;
+        margin: 14mm;
+      }
 
-  body {
-    background: white !important;
-    color: black !important;
-    font-size: 12px;
-  }
+      body {
+        background: white !important;
+        color: black !important;
+        font-size: 12px;
+      }
 
-  .no-print,
-  .sticky-header,
-  #loginScreen,
-  #step1,
-  #step2,
-  #step3,
-  #step4,
-  #step5,
-  #step6 {
-    display: none !important;
-  }
+      .no-print,
+      .sticky-header,
+      #loginScreen,
+      #step1,
+      #step2,
+      #step3,
+      #step4,
+      #step5,
+      #step6 {
+        display: none !important;
+      }
 
-  #summarySection {
-    display: block !important;
-    box-shadow: none !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
+      #summarySection {
+        display: block !important;
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
 
-  .app {
-    max-width: 100% !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
+      .app {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
 
-  .card {
-    box-shadow: none !important;
-    border: none !important;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
+      .card {
+        box-shadow: none !important;
+        border: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
 
-  .pdf-header {
-    border-bottom: 2px solid #000 !important;
-    padding-bottom: 10px !important;
-    margin-bottom: 14px !important;
-  }
+      .pdf-header {
+        border-bottom: 2px solid #000 !important;
+        padding-bottom: 10px !important;
+        margin-bottom: 14px !important;
+      }
 
-  .pdf-logo {
-    width: 70px !important;
-    height: 70px !important;
-    border: none !important;
-    padding: 0 !important;
-  }
+      .pdf-logo {
+        width: 70px !important;
+        height: 70px !important;
+        border: none !important;
+        padding: 0 !important;
+      }
 
-  .pdf-title {
-    font-size: 18px !important;
-    font-weight: 700 !important;
-    margin: 0 !important;
-  }
+      .pdf-title {
+        font-size: 18px !important;
+        font-weight: 700 !important;
+        margin: 0 !important;
+      }
 
-  .pdf-subtitle {
-    font-size: 12px !important;
-    color: black !important;
-    margin-top: 2px !important;
-  }
+      .pdf-subtitle {
+        font-size: 12px !important;
+        color: black !important;
+        margin-top: 2px !important;
+      }
 
-  .summary-table {
-    width: 100% !important;
-    border-collapse: collapse !important;
-    font-size: 11px !important;
-  }
+      .summary-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        font-size: 11px !important;
+      }
 
-  .summary-table th,
-  .summary-table td {
-    border: 1px solid #000 !important;
-    padding: 7px 8px !important;
-    vertical-align: top !important;
-  }
+      .summary-table th,
+      .summary-table td {
+        border: 1px solid #000 !important;
+        padding: 7px 8px !important;
+        vertical-align: top !important;
+      }
 
-  .summary-table th {
-    width: 26% !important;
-    background: #f2f2f2 !important;
-    font-weight: 700 !important;
-  }
+      .summary-table th {
+        width: 26% !important;
+        background: #f2f2f2 !important;
+        font-weight: 700 !important;
+      }
 
-  .tag-list {
-    margin: 0 !important;
-    padding-left: 16px !important;
-  }
+      .tag-list {
+        margin: 0 !important;
+        padding-left: 16px !important;
+      }
 
-  .tag-list li {
-    margin-bottom: 2px !important;
-  }
-}
-/* ===== Signature section styling ===== */
+      .tag-list li {
+        margin-bottom: 2px !important;
+      }
 
-.signature-block {
-  margin-top: 25px;
-}
+      .signature-section {
+        margin-top: 30px !important;
+      }
 
-.signature-line {
-  border-top: 1px solid #000;
-  width: 240px;
-  margin-top: 25px;
-}
-
-.signature-label {
-  font-size: 11px;
-  margin-top: 4px;
-}
-
+      .signature-line {
+        border-top: 1px solid #000 !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -448,7 +469,7 @@
       </div>
 
       <div class="actions">
-        <button class="btn-primary" onclick="handleLogin()">Log In</button>
+        <button class="btn-primary" id="loginBtn" onclick="handleLogin()">Log In</button>
       </div>
 
       <div id="loginMessage" class="warning"></div>
@@ -626,6 +647,11 @@
         <h2 style="margin:0;">Assessment</h2>
       </div>
 
+      <div class="soft-box">
+        <label for="patientReceivedCondition">Patient Was Received As</label>
+        <textarea id="patientReceivedCondition" placeholder="e.g. The patient was received sitting in bed, alert, awake, and oriented."></textarea>
+      </div>
+
       <div class="grid-3">
         <div>
           <label for="temperature">Temperature (°C)</label>
@@ -656,7 +682,7 @@
 
       <div class="soft-box">
         <label for="objectiveData">Objective Observation</label>
-        <textarea id="objectiveData"></textarea>
+        <textarea id="objectiveData" placeholder="Medical abbreviations may be entered here."></textarea>
       </div>
 
       <div class="no-print" style="margin-top: 16px;">
@@ -664,7 +690,7 @@
           <input type="checkbox" id="useAiAssist" checked />
           Use secure AI assist
         </label>
-        <div class="footer-note">This generates top 3 suggested NANDA diagnoses, one primary diagnosis, NOC outcomes, NIC interventions, goals, and implementation suggestions.</div>
+        <div class="footer-note">The AI request excludes patient name, address, and patient number.</div>
       </div>
 
       <div class="actions no-print">
@@ -774,8 +800,13 @@
       </div>
 
       <div style="margin-top:16px;">
-        <label for="nurseFullName">Nurse Full Name for Validation</label>
+        <label for="nurseFullName">Prepared By</label>
         <input id="nurseFullName" type="text" placeholder="Type full name before printing PDF" />
+      </div>
+
+      <div style="margin-top:16px;">
+        <label for="checkedByName">Checked By</label>
+        <input id="checkedByName" type="text" placeholder="Clinical Instructor / Supervisor" />
       </div>
 
       <div class="actions no-print">
@@ -789,99 +820,69 @@
 
     <section id="summarySection" class="card hidden">
       <div class="pdf-header">
-  <img src="logo.png" alt="Logo" class="pdf-logo" onerror="this.style.display='none'" />
-  <div style="flex:1;">
-    <h2 class="pdf-title">DLSMHSI College of Nursing</h2>
-    <div class="pdf-subtitle">Computer Generated and AI-Assisted Nursing Care Plan</div>
-    <div style="font-size:11px; margin-top:4px;">
-      Official Nursing Care Plan Documentation Form
-    </div>
-  </div>
-</div>
+        <img src="logo.png" alt="Logo" class="pdf-logo" onerror="this.style.display='none'" />
+        <div>
+          <h2 class="pdf-title">DLSMHSI College of Nursing</h2>
+          <div class="pdf-subtitle">Computer Generated and AI-Assisted Nursing Care Plan</div>
+          <div style="font-size:11px; margin-top:4px;">Official Nursing Care Plan Documentation Form</div>
+        </div>
+      </div>
 
       <table class="summary-table">
-  <tr><th colspan="2" style="text-align:center;">PATIENT INFORMATION</th></tr>
-  <tr><th>Patient Name</th><td id="sumPatientName"></td></tr>
-  <tr><th>Patient Number</th><td id="sumPatientNumber"></td></tr>
-  <tr><th>Date of Birth / Age</th><td id="sumDobAge"></td></tr>
-  <tr><th>Sex</th><td id="sumSex"></td></tr>
-  <tr><th>Civil Status</th><td id="sumCivilStatus"></td></tr>
-  <tr><th>Religion</th><td id="sumReligion"></td></tr>
-  <tr><th>Admission</th><td id="sumAdmission"></td></tr>
-  <tr><th>Attending Physician</th><td id="sumPhysician"></td></tr>
-  <tr><th>Room Number</th><td id="sumRoom"></td></tr>
-  <tr><th>Address</th><td id="sumAddress"></td></tr>
-  <tr><th>Chief Complaint</th><td id="sumChiefComplaint"></td></tr>
-  <tr><th>Admitting Diagnosis</th><td id="sumAdmittingDiagnosis"></td></tr>
-  <tr><th>History / Additional Details</th><td id="sumHistory"></td></tr>
+        <tr><th colspan="2" style="text-align:center;">PATIENT INFORMATION</th></tr>
+        <tr><th>Patient Name</th><td id="sumPatientName"></td></tr>
+        <tr><th>Patient Number</th><td id="sumPatientNumber"></td></tr>
+        <tr><th>Date of Birth / Age</th><td id="sumDobAge"></td></tr>
+        <tr><th>Sex</th><td id="sumSex"></td></tr>
+        <tr><th>Civil Status</th><td id="sumCivilStatus"></td></tr>
+        <tr><th>Religion</th><td id="sumReligion"></td></tr>
+        <tr><th>Admission</th><td id="sumAdmission"></td></tr>
+        <tr><th>Attending Physician</th><td id="sumPhysician"></td></tr>
+        <tr><th>Room Number</th><td id="sumRoom"></td></tr>
+        <tr><th>Address</th><td id="sumAddress"></td></tr>
+        <tr><th>Chief Complaint</th><td id="sumChiefComplaint"></td></tr>
+        <tr><th>Admitting Diagnosis</th><td id="sumAdmittingDiagnosis"></td></tr>
+        <tr><th>History / Additional Details</th><td id="sumHistory"></td></tr>
 
-  <tr><th colspan="2" style="text-align:center;">ASSESSMENT DATA</th></tr>
-  <tr><th>Vital Signs</th><td id="sumVitals"></td></tr>
-  <tr><th>Subjective Report</th><td id="sumSubjective"></td></tr>
-  <tr><th>Objective Observation</th><td id="sumObjective"></td></tr>
+        <tr><th colspan="2" style="text-align:center;">ASSESSMENT DATA</th></tr>
+        <tr><th>Patient Was Received As</th><td id="sumPatientReceivedCondition"></td></tr>
+        <tr><th>Vital Signs</th><td id="sumVitals"></td></tr>
+        <tr><th>Subjective Report</th><td id="sumSubjective"></td></tr>
+        <tr><th>Objective Observation</th><td id="sumObjective"></td></tr>
 
-  <tr><th colspan="2" style="text-align:center;">NURSING ANALYSIS</th></tr>
-  <tr><th>Top 3 NANDA Diagnoses</th><td id="sumTopDiagnoses"></td></tr>
-  <tr><th>Primary Nursing Diagnosis</th><td id="sumPrimaryDiagnosis"></td></tr>
-  <tr><th>Rationale</th><td id="sumRationale"></td></tr>
-  <tr><th>NOC Outcomes</th><td id="sumNocOutcomes"></td></tr>
-  <tr><th>NIC Interventions</th><td id="sumNicInterventions"></td></tr>
+        <tr><th colspan="2" style="text-align:center;">NURSING ANALYSIS</th></tr>
+        <tr><th>Top 3 NANDA Diagnoses</th><td id="sumTopDiagnoses"></td></tr>
+        <tr><th>Primary Nursing Diagnosis</th><td id="sumPrimaryDiagnosis"></td></tr>
+        <tr><th>Rationale</th><td id="sumRationale"></td></tr>
+        <tr><th>NOC Outcomes</th><td id="sumNocOutcomes"></td></tr>
+        <tr><th>NIC Interventions</th><td id="sumNicInterventions"></td></tr>
 
-  <tr><th colspan="2" style="text-align:center;">IMPLEMENTATION PLAN</th></tr>
-  <tr><th>Medications</th><td id="sumMedications"></td></tr>
-  <tr><th>Suggested Implementation</th><td id="sumImplementationSuggested"></td></tr>
-  <tr><th>Short-Term Goal</th><td id="sumShortGoal"></td></tr>
-  <tr><th>Long-Term Goal</th><td id="sumLongGoal"></td></tr>
-  <tr><th>Implementation Notes</th><td id="sumImplementation"></td></tr>
+        <tr><th colspan="2" style="text-align:center;">IMPLEMENTATION PLAN</th></tr>
+        <tr><th>Medications</th><td id="sumMedications"></td></tr>
+        <tr><th>Suggested Implementation</th><td id="sumImplementationSuggested"></td></tr>
+        <tr><th>Short-Term Goal</th><td id="sumShortGoal"></td></tr>
+        <tr><th>Long-Term Goal</th><td id="sumLongGoal"></td></tr>
+        <tr><th>Implementation Notes</th><td id="sumImplementation"></td></tr>
 
-  <tr><th colspan="2" style="text-align:center;">EVALUATION</th></tr>
-  <tr><th>Evaluation Status</th><td id="sumEvalStatus"></td></tr>
-  <tr><th>Evaluation Notes</th><td id="sumEvalNotes"></td></tr>
-  <tr><th>Validated By</th><td id="sumNurseName"></td></tr>
-  <tr><th>Date Printed</th><td id="sumPrintedDate"></td></tr>
-  <tr>
-  <th>Prepared By</th>
-  <td>
-    <div id="sumNurseName"></div>
-    <div style="margin-top:25px;border-top:1px solid #000;width:240px;"></div>
-    <div style="font-size:11px;">Signature over printed name</div>
-  </td>
-</tr>
+        <tr><th colspan="2" style="text-align:center;">EVALUATION</th></tr>
+        <tr><th>Evaluation Status</th><td id="sumEvalStatus"></td></tr>
+        <tr><th>Evaluation Notes</th><td id="sumEvalNotes"></td></tr>
+        <tr><th>Date Printed</th><td id="sumPrintedDate"></td></tr>
+      </table>
 
-<tr>
-  <th>Checked By</th>
-  <td>
-    <div style="margin-top:20px;border-top:1px solid #000;width:240px;"></div>
-    <div style="font-size:11px;">Clinical Instructor / Supervisor</div>
-  </td>
-</tr>
+      <div class="signature-section">
+        <div class="signature-box">
+          <div class="signature-name" id="sumPreparedBy"></div>
+          <div class="signature-line"></div>
+          <div class="signature-label">Prepared By / Signature over printed name</div>
+        </div>
 
-  <tr>
-  <th>Prepared By</th>
-  <td>
-    <div id="sumNurseName"></div>
-    <div style="margin-top:25px;border-top:1px solid #000;width:240px;"></div>
-    <div style="font-size:11px;">Signature over printed name</div>
-  </td>
-</tr>
-
-<tr>
-  <th>Prepared By</th>
-  <td style="text-align:right;">
-    <div id="sumNurseName"></div>
-    <div style="margin-top:25px;border-top:1px solid #000;width:240px;margin-left:auto;"></div>
-    <div style="font-size:11px;">Signature over printed name</div>
-  </td>
-</tr>
-
-<tr>
-  <th>Checked By</th>
-  <td style="text-align:right;">
-    <div style="margin-top:25px;border-top:1px solid #000;width:240px;margin-left:auto;"></div>
-    <div style="font-size:11px;">Clinical Instructor / Supervisor</div>
-  </td>
-</tr>
-</table>
+        <div class="signature-box">
+          <div class="signature-name" id="sumCheckedBy"></div>
+          <div class="signature-line"></div>
+          <div class="signature-label">Checked By / Clinical Instructor or Supervisor</div>
+        </div>
+      </div>
     </section>
   </div>
 
@@ -1136,6 +1137,7 @@
         chiefComplaint: document.getElementById("chiefComplaint").value.trim(),
         admittingDiagnosis: document.getElementById("admittingDiagnosis").value.trim(),
         history: document.getElementById("obHistory").value.trim(),
+        patientReceivedCondition: document.getElementById("patientReceivedCondition").value.trim(),
         subjectiveData: document.getElementById("subjectiveData").value.trim(),
         objectiveData: document.getElementById("objectiveData").value.trim(),
         temperature: document.getElementById("temperature").value.trim(),
@@ -1243,6 +1245,7 @@
       document.getElementById("sumChiefComplaint").textContent = safe(val("chiefComplaint"));
       document.getElementById("sumAdmittingDiagnosis").textContent = safe(val("admittingDiagnosis"));
       document.getElementById("sumHistory").innerHTML = bullets(val("obHistory"));
+      document.getElementById("sumPatientReceivedCondition").innerHTML = bullets(val("patientReceivedCondition"));
       document.getElementById("sumVitals").innerHTML = bullets(vitals);
       document.getElementById("sumSubjective").innerHTML = bullets(val("subjectiveData"));
       document.getElementById("sumObjective").innerHTML = bullets(val("objectiveData"));
@@ -1258,8 +1261,9 @@
       document.getElementById("sumImplementation").innerHTML = bullets(val("implementationNotes"));
       document.getElementById("sumEvalStatus").textContent = safe(getEvaluationStatus());
       document.getElementById("sumEvalNotes").innerHTML = bullets(val("evaluationNotes"));
-      document.getElementById("sumNurseName").textContent = safe(val("nurseFullName"));
       document.getElementById("sumPrintedDate").textContent = new Date().toLocaleString();
+      document.getElementById("sumPreparedBy").textContent = safe(val("nurseFullName"));
+      document.getElementById("sumCheckedBy").textContent = safe(val("checkedByName"));
     }
 
     function previewSummary() {
@@ -1269,11 +1273,17 @@
 
     function printAsPDF() {
       const nurseName = document.getElementById("nurseFullName").value.trim();
+      const checkedBy = document.getElementById("checkedByName").value.trim();
       const evalStatus = getEvaluationStatus();
       const msg = document.getElementById("validationMessage");
 
       if (nurseName.split(" ").length < 2) {
-        msg.textContent = "Please type the nurse's full name before converting to PDF.";
+        msg.textContent = "Please type the Prepared By full name before converting to PDF.";
+        return;
+      }
+
+      if (!checkedBy) {
+        msg.textContent = "Please type the Checked By name before converting to PDF.";
         return;
       }
 
@@ -1293,10 +1303,11 @@
         "patientName","patientNumber","dateOfBirth","age","sex","civilStatus","religion",
         "dateOfAdmission","timeOfAdmission","attendingPhysician","roomNumber","chiefComplaint",
         "addressLine1","municipality","barangay","admittingDiagnosis","obHistory",
+        "patientReceivedCondition",
         "temperature","bloodPressure","heartRate","respiratoryRate","oxygenSaturation",
         "subjectiveData","objectiveData","topDiagnoses","primaryDiagnosis","rationaleNotes",
         "nocOutcomes","nicInterventions","implementationSuggestions","shortTermGoal","longTermGoal",
-        "implementationNotes","evaluationNotes","nurseFullName","privacyAgree"
+        "implementationNotes","evaluationNotes","nurseFullName","checkedByName","privacyAgree"
       ];
 
       const data = {
@@ -1382,6 +1393,15 @@
     });
 
     document.addEventListener("input", saveDraft);
+
+    document.addEventListener("keydown", (event) => {
+      if (document.getElementById("loginScreen").classList.contains("hidden")) return;
+      if (event.key === "Enter") {
+        event.preventDefault();
+        handleLogin();
+      }
+    });
+
     window.addEventListener("beforeunload", () => {
       sessionStorage.removeItem(SESSION_KEY);
     });
