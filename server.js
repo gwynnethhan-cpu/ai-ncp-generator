@@ -87,10 +87,25 @@ function validateCaseInput(body) {
       heartRate: cleanText(body.heartRate, 50),
       respiratoryRate: cleanText(body.respiratoryRate, 50),
       oxygenSaturation: cleanText(body.oxygenSaturation, 50),
+      fhr: cleanText(body.fhr, 50),
+      contractionType: cleanText(body.contractionType, 100),
+      contractionIntensity: cleanText(body.contractionIntensity, 100),
+      contractionFrequency: cleanText(body.contractionFrequency, 100),
+      contractionDuration: cleanText(body.contractionDuration, 100),
+      bishopPosition: cleanText(body.bishopPosition, 20),
+      bishopConsistency: cleanText(body.bishopConsistency, 20),
+      bishopEffacement: cleanText(body.bishopEffacement, 20),
+      bishopDilation: cleanText(body.bishopDilation, 20),
+      bishopStation: cleanText(body.bishopStation, 20),
+      bishopScore: cleanText(body.bishopScore, 20),
       medications: sanitizeMedications(body.medications)
     }
   };
 }
+
+app.get("/", (_req, res) => {
+  res.send("AI NCP backend is running.");
+});
 
 app.get("/health", (_req, res) => {
   res.json({ ok: true, aiReady: Boolean(process.env.GEMINI_API_KEY) });
@@ -127,7 +142,7 @@ app.post("/generate-ncp", authMiddleware, aiLimiter, async (req, res) => {
 
   try {
     const prompt = `
-You are assisting with an educational nursing care plan.
+You are assisting with an educational nursing care plan for a labor and delivery nursing context when applicable.
 
 STRICT RULES:
 1. Use only the provided data.
@@ -148,8 +163,10 @@ STRICT RULES:
    "After"
 14. NIC interventions and implementation suggestions must be phrased in PAST TENSE, as if already carried out by the nurse.
 15. If medications are listed by the nurse, you may mention medication administration/monitoring/documentation only as already performed nursing actions, not as new prescriptions.
-16. Return VALID JSON only.
-17. No markdown. No code fences.
+16. If labor-related data is present, consider Bishop’s score, fetal heart rate, and uterine contractions in the interpretation.
+17. Use the structured labor assessment data already given instead of repeating it unnecessarily in the objective analysis.
+18. Return VALID JSON only.
+19. No markdown. No code fences.
 
 JSON keys must be exactly:
 topDiagnoses
