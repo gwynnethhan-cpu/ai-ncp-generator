@@ -210,7 +210,14 @@ ${JSON.stringify(clinicalData, null, 2)}
 
     const text = (response.text || "").trim();
     const parsed = JSON.parse(text);
+let primaryDiagnosis = cleanText(parsed.primaryDiagnosis || topDiagnoses[0], 800);
 
+// FORCE r/t FORMAT IF MISSING
+if (!primaryDiagnosis.toLowerCase().includes("related to") &&
+    !primaryDiagnosis.toLowerCase().includes("r/t")) {
+
+  primaryDiagnosis = `${primaryDiagnosis} related to insufficient supporting data (AI-generated placeholder — review and refine)`;
+}
     let topDiagnoses = cleanArray(parsed.topDiagnoses, 260, 3);
 
     if (topDiagnoses.length < 3) {
