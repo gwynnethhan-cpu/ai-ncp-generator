@@ -499,8 +499,8 @@
           <div class="step active" id="step-indicator-1">1. Privacy Notice</div>
           <div class="step" id="step-indicator-2">2. Patient Information</div>
           <div class="step" id="step-indicator-3">3. Assessment</div>
-          <div class="step" id="step-indicator-4">4. Diagnosis, NOC, NIC</div>
-          <div class="step" id="step-indicator-5">5. Goals, Medication, Implementation</div>
+          <div class="step" id="step-indicator-4">4. Nursing Diagnosis</div>
+          <div class="step" id="step-indicator-5">5. Planning and Intervention</div>
           <div class="step" id="step-indicator-6">6. Evaluation & PDF</div>
         </div>
       </div>
@@ -652,6 +652,38 @@
         <textarea id="patientReceivedCondition" placeholder="e.g. The patient was received sitting in bed, alert, awake, and oriented."></textarea>
       </div>
 
+      <div class="soft-box">
+        <label for="subjectiveData">Subjective Report</label>
+        <textarea id="subjectiveData"></textarea>
+      </div>
+
+      <div class="soft-box">
+        <label for="objectiveData">Objective Observation</label>
+        <textarea id="objectiveData" placeholder="You may enter additional findings not already included below. Medical abbreviations may be used."></textarea>
+      </div>
+
+      <div class="soft-box">
+        <h3 style="margin-top:0;">Uterine Contractions</h3>
+        <div class="grid-3">
+          <div>
+            <label for="contractionType">Contraction Type</label>
+            <input id="contractionType" type="text" placeholder="e.g. regular, irregular" />
+          </div>
+          <div>
+            <label for="contractionIntensity">Contraction Intensity</label>
+            <input id="contractionIntensity" type="text" placeholder="e.g. mild, moderate, strong" />
+          </div>
+          <div>
+            <label for="contractionFrequency">Contraction Frequency</label>
+            <input id="contractionFrequency" type="text" placeholder="e.g. every 3 minutes" />
+          </div>
+          <div>
+            <label for="contractionDuration">Contraction Duration</label>
+            <input id="contractionDuration" type="text" placeholder="e.g. 45–60 seconds" />
+          </div>
+        </div>
+      </div>
+
       <div class="grid-3">
         <div>
           <label for="temperature">Temperature (°C)</label>
@@ -676,28 +708,6 @@
         <div>
           <label for="fhr">Fetal Heart Rate (bpm)</label>
           <input id="fhr" type="text" placeholder="e.g. 140" />
-        </div>
-      </div>
-
-      <div class="soft-box">
-        <h3 style="margin-top:0;">Uterine Contractions</h3>
-        <div class="grid-3">
-          <div>
-            <label for="contractionType">Contraction Type</label>
-            <input id="contractionType" type="text" placeholder="e.g. regular, irregular" />
-          </div>
-          <div>
-            <label for="contractionIntensity">Contraction Intensity</label>
-            <input id="contractionIntensity" type="text" placeholder="e.g. mild, moderate, strong" />
-          </div>
-          <div>
-            <label for="contractionFrequency">Contraction Frequency</label>
-            <input id="contractionFrequency" type="text" placeholder="e.g. every 3 minutes" />
-          </div>
-          <div>
-            <label for="contractionDuration">Contraction Duration</label>
-            <input id="contractionDuration" type="text" placeholder="e.g. 45–60 seconds" />
-          </div>
         </div>
       </div>
 
@@ -768,16 +778,6 @@
         </div>
       </div>
 
-      <div class="soft-box">
-        <label for="subjectiveData">Subjective Report</label>
-        <textarea id="subjectiveData"></textarea>
-      </div>
-
-      <div class="soft-box">
-        <label for="objectiveData">Objective Observation</label>
-        <textarea id="objectiveData" placeholder="You may enter additional findings not already included above. Medical abbreviations may be used."></textarea>
-      </div>
-
       <div class="no-print" style="margin-top: 16px;">
         <label class="inline">
           <input type="checkbox" id="useAiAssist" checked />
@@ -797,7 +797,7 @@
     <section id="step4" class="card hidden">
       <div class="brand-left" style="margin-bottom: 12px;">
         <img src="logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none'" />
-        <h2 style="margin:0;">Diagnosis, NOC, and NIC</h2>
+        <h2 style="margin:0;">Nursing Diagnosis</h2>
       </div>
 
       <div class="output-box">
@@ -815,16 +815,6 @@
         <textarea id="rationaleNotes"></textarea>
       </div>
 
-      <div class="output-box">
-        <label for="nocOutcomes">NOC Outcomes</label>
-        <textarea id="nocOutcomes"></textarea>
-      </div>
-
-      <div class="output-box">
-        <label for="nicInterventions">NIC Interventions</label>
-        <textarea id="nicInterventions"></textarea>
-      </div>
-
       <div class="actions no-print">
         <button class="btn-secondary" onclick="goToStep(3)">Back</button>
         <button class="btn-primary" onclick="goToStep(5)">Next</button>
@@ -834,7 +824,7 @@
     <section id="step5" class="card hidden">
       <div class="brand-left" style="margin-bottom: 12px;">
         <img src="logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none'" />
-        <h2 style="margin:0;">Goals, Medication, and Implementation</h2>
+        <h2 style="margin:0;">Planning and Intervention</h2>
       </div>
 
       <div class="grid">
@@ -849,21 +839,36 @@
       </div>
 
       <div class="soft-box">
+        <label for="nocOutcomes">NOC Outcomes</label>
+        <textarea id="nocOutcomes"></textarea>
+      </div>
+
+      <div class="soft-box">
+        <label for="diagnosticInterventions">Diagnostic Interventions</label>
+        <textarea id="diagnosticInterventions"></textarea>
+      </div>
+
+      <div class="soft-box">
+        <label for="therapeuticInterventions">Therapeutic Interventions</label>
+        <textarea id="therapeuticInterventions"></textarea>
+      </div>
+
+      <div class="soft-box">
+        <label for="educativeInterventions">Educative Interventions</label>
+        <textarea id="educativeInterventions"></textarea>
+      </div>
+
+      <div class="soft-box">
+        <label for="interventionDone">Intervention Done</label>
+        <textarea id="interventionDone" placeholder="Type additional interventions done here if needed."></textarea>
+      </div>
+
+      <div class="soft-box">
         <label>Medication Section</label>
         <div id="medicationList"></div>
         <div class="actions no-print" style="margin-top: 12px;">
           <button type="button" class="btn-secondary" onclick="addMedicationRow()">Add Medication</button>
         </div>
-      </div>
-
-      <div class="soft-box">
-        <label for="implementationSuggestions">Suggested Implementation</label>
-        <textarea id="implementationSuggestions"></textarea>
-      </div>
-
-      <div class="soft-box">
-        <label for="implementationNotes">Implementation Notes</label>
-        <textarea id="implementationNotes"></textarea>
       </div>
 
       <div class="actions no-print">
@@ -926,42 +931,36 @@
         <tr><th>Patient Name</th><td id="sumPatientName"></td></tr>
         <tr><th>Patient Number</th><td id="sumPatientNumber"></td></tr>
         <tr><th>Date of Birth / Age</th><td id="sumDobAge"></td></tr>
-        <tr><th>Sex</th><td id="sumSex"></td></tr>
-        <tr><th>Civil Status</th><td id="sumCivilStatus"></td></tr>
-        <tr><th>Religion</th><td id="sumReligion"></td></tr>
-        <tr><th>Admission</th><td id="sumAdmission"></td></tr>
+        <tr><th>Date of Admission</th><td id="sumAdmission"></td></tr>
         <tr><th>Attending Physician</th><td id="sumPhysician"></td></tr>
-        <tr><th>Room Number</th><td id="sumRoom"></td></tr>
-        <tr><th>Address</th><td id="sumAddress"></td></tr>
-        <tr><th>Chief Complaint</th><td id="sumChiefComplaint"></td></tr>
         <tr><th>Admitting Diagnosis</th><td id="sumAdmittingDiagnosis"></td></tr>
-        <tr><th>History / Additional Details</th><td id="sumHistory"></td></tr>
 
         <tr><th colspan="2" style="text-align:center;">ASSESSMENT DATA</th></tr>
-        <tr><th>Patient Was Received As</th><td id="sumPatientReceivedCondition"></td></tr>
-        <tr><th>Vital Signs</th><td id="sumVitals"></td></tr>
-        <tr><th>Fetal Heart Rate</th><td id="sumFhr"></td></tr>
+        <tr><th>Subjective Report</th><td id="sumSubjective"></td></tr>
+        <tr><th>Objective Observation</th><td id="sumObjective"></td></tr>
         <tr><th>Contraction Type</th><td id="sumContractionType"></td></tr>
         <tr><th>Contraction Intensity</th><td id="sumContractionIntensity"></td></tr>
         <tr><th>Contraction Frequency</th><td id="sumContractionFrequency"></td></tr>
         <tr><th>Contraction Duration</th><td id="sumContractionDuration"></td></tr>
+        <tr><th>Vital Signs</th><td id="sumVitals"></td></tr>
+        <tr><th>Fetal Heart Rate</th><td id="sumFhr"></td></tr>
         <tr><th>Bishop’s Score</th><td id="sumBishopScore"></td></tr>
-        <tr><th>Subjective Report</th><td id="sumSubjective"></td></tr>
-        <tr><th>Objective Observation</th><td id="sumObjective"></td></tr>
+        <tr><th>Patient Was Received As</th><td id="sumPatientReceivedCondition"></td></tr>
 
-        <tr><th colspan="2" style="text-align:center;">NURSING ANALYSIS</th></tr>
+        <tr><th colspan="2" style="text-align:center;">NURSING DIAGNOSIS</th></tr>
         <tr><th>Top 3 NANDA Diagnoses</th><td id="sumTopDiagnoses"></td></tr>
         <tr><th>Primary Nursing Diagnosis</th><td id="sumPrimaryDiagnosis"></td></tr>
         <tr><th>Rationale</th><td id="sumRationale"></td></tr>
-        <tr><th>NOC Outcomes</th><td id="sumNocOutcomes"></td></tr>
-        <tr><th>NIC Interventions</th><td id="sumNicInterventions"></td></tr>
 
-        <tr><th colspan="2" style="text-align:center;">IMPLEMENTATION PLAN</th></tr>
-        <tr><th>Medications</th><td id="sumMedications"></td></tr>
-        <tr><th>Suggested Implementation</th><td id="sumImplementationSuggested"></td></tr>
+        <tr><th colspan="2" style="text-align:center;">PLANNING AND INTERVENTION</th></tr>
         <tr><th>Short-Term Goal</th><td id="sumShortGoal"></td></tr>
         <tr><th>Long-Term Goal</th><td id="sumLongGoal"></td></tr>
-        <tr><th>Implementation Notes</th><td id="sumImplementation"></td></tr>
+        <tr><th>NOC Outcomes</th><td id="sumNocOutcomes"></td></tr>
+        <tr><th>Diagnostic Interventions</th><td id="sumDiagnosticInterventions"></td></tr>
+        <tr><th>Therapeutic Interventions</th><td id="sumTherapeuticInterventions"></td></tr>
+        <tr><th>Educative Interventions</th><td id="sumEducativeInterventions"></td></tr>
+        <tr><th>Intervention Done</th><td id="sumInterventionDone"></td></tr>
+        <tr><th>Medications</th><td id="sumMedications"></td></tr>
 
         <tr><th colspan="2" style="text-align:center;">EVALUATION</th></tr>
         <tr><th>Evaluation Status</th><td id="sumEvalStatus"></td></tr>
@@ -1324,11 +1323,14 @@
       document.getElementById("nocOutcomes").value = Array.isArray(result.nocOutcomes)
         ? result.nocOutcomes.join("\n")
         : "";
-      document.getElementById("nicInterventions").value = Array.isArray(result.nicInterventions)
-        ? result.nicInterventions.join("\n")
+      document.getElementById("diagnosticInterventions").value = Array.isArray(result.diagnosticInterventions)
+        ? result.diagnosticInterventions.join("\n")
         : "";
-      document.getElementById("implementationSuggestions").value = Array.isArray(result.implementationSuggestions)
-        ? result.implementationSuggestions.join("\n")
+      document.getElementById("therapeuticInterventions").value = Array.isArray(result.therapeuticInterventions)
+        ? result.therapeuticInterventions.join("\n")
+        : "";
+      document.getElementById("educativeInterventions").value = Array.isArray(result.educativeInterventions)
+        ? result.educativeInterventions.join("\n")
         : "";
       document.getElementById("shortTermGoal").value = result.shortTermGoal || "";
       document.getElementById("longTermGoal").value = result.longTermGoal || "";
@@ -1358,13 +1360,6 @@
       const val = id => document.getElementById(id).value.trim();
       const safe = value => value || "-";
 
-      const fullAddress = [
-        val("addressLine1"),
-        val("barangay"),
-        val("municipality"),
-        "Cavite"
-      ].filter(Boolean).join(", ");
-
       const vitals = [
         `Temperature: ${safe(val("temperature"))} °C`,
         `Blood Pressure: ${safe(val("bloodPressure"))} mmHg`,
@@ -1388,36 +1383,34 @@
       document.getElementById("sumPatientName").textContent = safe(val("patientName"));
       document.getElementById("sumPatientNumber").textContent = safe(val("patientNumber"));
       document.getElementById("sumDobAge").textContent = `${safe(val("dateOfBirth"))} / ${safe(val("age"))}`;
-      document.getElementById("sumSex").textContent = safe(val("sex"));
-      document.getElementById("sumCivilStatus").textContent = safe(val("civilStatus"));
-      document.getElementById("sumReligion").textContent = safe(val("religion"));
-      document.getElementById("sumAdmission").textContent = `${safe(val("dateOfAdmission"))} ${safe(val("timeOfAdmission"))}`;
+      document.getElementById("sumAdmission").textContent = safe(val("dateOfAdmission"));
       document.getElementById("sumPhysician").textContent = safe(val("attendingPhysician"));
-      document.getElementById("sumRoom").textContent = safe(val("roomNumber"));
-      document.getElementById("sumAddress").textContent = safe(fullAddress);
-      document.getElementById("sumChiefComplaint").textContent = safe(val("chiefComplaint"));
       document.getElementById("sumAdmittingDiagnosis").textContent = safe(val("admittingDiagnosis"));
-      document.getElementById("sumHistory").innerHTML = bullets(val("obHistory"));
-      document.getElementById("sumPatientReceivedCondition").innerHTML = bullets(val("patientReceivedCondition"));
-      document.getElementById("sumVitals").innerHTML = bullets(vitals);
-      document.getElementById("sumFhr").textContent = safe(val("fhr"));
+
+      document.getElementById("sumSubjective").innerHTML = bullets(val("subjectiveData"));
+      document.getElementById("sumObjective").innerHTML = bullets(val("objectiveData"));
       document.getElementById("sumContractionType").textContent = safe(val("contractionType"));
       document.getElementById("sumContractionIntensity").textContent = safe(val("contractionIntensity"));
       document.getElementById("sumContractionFrequency").textContent = safe(val("contractionFrequency"));
       document.getElementById("sumContractionDuration").textContent = safe(val("contractionDuration"));
+      document.getElementById("sumVitals").innerHTML = bullets(vitals);
+      document.getElementById("sumFhr").textContent = safe(val("fhr"));
       document.getElementById("sumBishopScore").textContent = safe(val("bishopScore"));
-      document.getElementById("sumSubjective").innerHTML = bullets(val("subjectiveData"));
-      document.getElementById("sumObjective").innerHTML = bullets(val("objectiveData"));
+      document.getElementById("sumPatientReceivedCondition").innerHTML = bullets(val("patientReceivedCondition"));
+
       document.getElementById("sumTopDiagnoses").innerHTML = bullets(val("topDiagnoses"));
       document.getElementById("sumPrimaryDiagnosis").innerHTML = bullets(val("primaryDiagnosis"));
       document.getElementById("sumRationale").innerHTML = bullets(val("rationaleNotes"));
-      document.getElementById("sumNocOutcomes").innerHTML = bullets(val("nocOutcomes"));
-      document.getElementById("sumNicInterventions").innerHTML = bullets(val("nicInterventions"));
-      document.getElementById("sumMedications").innerHTML = bullets(meds);
-      document.getElementById("sumImplementationSuggested").innerHTML = bullets(val("implementationSuggestions"));
+
       document.getElementById("sumShortGoal").innerHTML = bullets(val("shortTermGoal"));
       document.getElementById("sumLongGoal").innerHTML = bullets(val("longTermGoal"));
-      document.getElementById("sumImplementation").innerHTML = bullets(val("implementationNotes"));
+      document.getElementById("sumNocOutcomes").innerHTML = bullets(val("nocOutcomes"));
+      document.getElementById("sumDiagnosticInterventions").innerHTML = bullets(val("diagnosticInterventions"));
+      document.getElementById("sumTherapeuticInterventions").innerHTML = bullets(val("therapeuticInterventions"));
+      document.getElementById("sumEducativeInterventions").innerHTML = bullets(val("educativeInterventions"));
+      document.getElementById("sumInterventionDone").innerHTML = bullets(val("interventionDone"));
+      document.getElementById("sumMedications").innerHTML = bullets(meds);
+
       document.getElementById("sumEvalStatus").textContent = safe(getEvaluationStatus());
       document.getElementById("sumEvalNotes").innerHTML = bullets(val("evaluationNotes"));
       document.getElementById("sumPrintedDate").textContent = new Date().toLocaleString();
@@ -1467,8 +1460,9 @@
         "contractionType","contractionIntensity","contractionFrequency","contractionDuration",
         "bishopPosition","bishopConsistency","bishopEffacement","bishopDilation","bishopStation","bishopScore",
         "subjectiveData","objectiveData","topDiagnoses","primaryDiagnosis","rationaleNotes",
-        "nocOutcomes","nicInterventions","implementationSuggestions","shortTermGoal","longTermGoal",
-        "implementationNotes","evaluationNotes","nurseFullName","checkedByName","privacyAgree"
+        "nocOutcomes","diagnosticInterventions","therapeuticInterventions","educativeInterventions",
+        "shortTermGoal","longTermGoal","interventionDone",
+        "evaluationNotes","nurseFullName","checkedByName","privacyAgree"
       ];
 
       const data = {
