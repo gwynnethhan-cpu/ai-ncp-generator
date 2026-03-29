@@ -166,16 +166,12 @@ STRICT RULES:
    - educativeInterventions
 14. Every intervention must be in PAST TENSE.
 15. The FIRST WORD of every intervention must be a past-tense nursing verb.
-16. Examples of correct style:
-   "Monitored vital signs every 4 hours."
-   "Assessed contraction pattern and intensity."
-   "Encouraged relaxation breathing techniques."
-17. Diagnostic interventions must contain assessment/monitoring/documentation actions.
-18. Therapeutic interventions must contain actual nursing care actions already done.
-19. Educative interventions must contain teaching/health instruction already given.
-20. If labor-related data is present, consider Bishop’s score, fetal heart rate, and uterine contractions.
-21. Return VALID JSON only.
-22. No markdown. No code fences.
+16. Diagnostic interventions must contain assessment, monitoring, observation, or documentation actions.
+17. Therapeutic interventions must contain actual nursing care actions already done.
+18. Educative interventions must contain teaching or health instruction already given.
+19. If labor-related data is present, consider Bishop’s score, fetal heart rate, and uterine contractions.
+20. Return VALID JSON only.
+21. No markdown. No code fences.
 
 JSON keys must be exactly:
 topDiagnoses
@@ -211,6 +207,44 @@ ${JSON.stringify(clinicalData, null, 2)}
         responseMimeType: "application/json"
       }
     });
+
+    const text = (response.text || "").trim();
+    const parsed = JSON.parse(text);
+
+    let topDiagnoses = cleanArray(parsed.topDiagnoses, 260, 3);
+
+    if (topDiagnoses.length < 3) {
+      const primary = cleanText(parsed.primaryDiagnosis, 500);
+      topDiagnoses = [
+        primary || "Review assessment cues for a primary NANDA diagnosis",
+        "Risk for complications related to current clinical condition",
+        "Further focused assessment may support another NANDA diagnosis"
+      ].slice(0, 3);
+    }
+
+    let primaryDiagnosis = cleanText(parsed.primaryDiagnosis || topDiagnoses[0], 800);
+    if (!primaryDiagnosis) {
+      primaryDiagnosis = topDiagnoses[0];
+    }
+
+    res.json({
+      topDiagnoses,
+      primaryDiagnosis,
+      rationaleNotes: cleanText(parsed.rationaleNotes, 1500),
+      nocOutcomes: cleanArray(parsed.nocOutcomes, 280, 6),
+      diagnosticInterventions: cleanArray(parsed.diagnosticInterventions, 320, 6),
+      therapeuticInterventions: cleanArray(parsed.therapeuticInterventions, 320, 6),
+      educativeInterventions: cleanArray(parsed.educativeInterventions, 320, 6),
+      shortTermGoal: cleanText(parsed.shortTermGoal, 900),
+      longTermGoal: cleanText(parsed.longTermGoal, 900)
+    });
+  } catch (error) {
+    console.error("Gemini error:", error);
+    res.status(500).json({
+      error: error?.message || "Gemini generation failed"
+    });
+  }
+});
 
     const text = (response.text || "").trim();
     const parsed = JSON.parse(text);
