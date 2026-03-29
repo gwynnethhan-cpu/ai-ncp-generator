@@ -14,7 +14,7 @@ const USERNAME = process.env.APP_USERNAME || "studentnurse";
 const PASSWORD = process.env.APP_PASSWORD || "ilovedora";
 const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-app.use(express.json({ limit: "400kb" }));
+app.use(express.json({ limit: "450kb" }));
 app.use(helmet());
 app.use(cors());
 
@@ -80,8 +80,8 @@ function validateCaseInput(body) {
       admittingDiagnosis: cleanText(body.admittingDiagnosis, 300),
       history: cleanText(body.history, 1500),
       patientReceivedCondition: cleanText(body.patientReceivedCondition, 1200),
-      subjectiveData: cleanText(body.subjectiveData, 2000),
-      objectiveData: cleanText(body.objectiveData, 2000),
+      subjectiveData: cleanText(body.subjectiveData, 2200),
+      objectiveData: cleanText(body.objectiveData, 2200),
       temperature: cleanText(body.temperature, 50),
       bloodPressure: cleanText(body.bloodPressure, 50),
       heartRate: cleanText(body.heartRate, 50),
@@ -147,34 +147,44 @@ You are assisting with an educational nursing care plan for a labor and delivery
 STRICT RULES:
 1. Use only the provided data.
 2. Do not invent unsupported facts.
-3. Understand common medical abbreviations in nursing objective data and interpret them carefully in context.
+3. Understand common medical abbreviations in objective nursing data.
 4. Generate TOP 3 possible NANDA nursing diagnoses in order of best fit.
-5. Each diagnosis must be nursing-style and clinically grounded.
-6. Select ONE primary diagnosis from the top 3.
-7. When supported by the case, write the primary diagnosis in this style:
+5. Select ONE primary diagnosis from the top 3.
+6. When supported, write the primary diagnosis in this style:
    "Problem related to [related factors] secondary to [condition if clearly supported] as evidenced by [signs/symptoms/cues]"
-8. If "secondary to" is not supported, omit it.
-9. If "as evidenced by" is not supported, omit it.
-10. Provide NOC outcomes and NIC interventions.
-11. Goals must be SMART, realistic, measurable, and appropriate to the case.
-12. Short-term goal must begin exactly with:
+7. If "secondary to" is not supported, omit it.
+8. If "as evidenced by" is not supported, omit it.
+9. Goals must be SMART, realistic, measurable, and appropriate to the case.
+10. Short-term goal must begin exactly with:
    "At the end of the 8 hour shift..."
-13. Long-term goal must begin exactly with:
+11. Long-term goal must begin exactly with:
    "After"
-14. NIC interventions and implementation suggestions must be phrased in PAST TENSE, as if already carried out by the nurse.
-15. If medications are listed by the nurse, you may mention medication administration/monitoring/documentation only as already performed nursing actions, not as new prescriptions.
-16. If labor-related data is present, consider Bishop’s score, fetal heart rate, and uterine contractions in the interpretation.
-17. Use the structured labor assessment data already given instead of repeating it unnecessarily in the objective analysis.
-18. Return VALID JSON only.
-19. No markdown. No code fences.
+12. Provide NOC outcomes.
+13. Provide intervention suggestions in THREE GROUPS only:
+   - diagnosticInterventions
+   - therapeuticInterventions
+   - educativeInterventions
+14. Every intervention must be in PAST TENSE.
+15. The FIRST WORD of every intervention must be a past-tense nursing verb.
+16. Examples of correct style:
+   "Monitored vital signs every 4 hours."
+   "Assessed contraction pattern and intensity."
+   "Encouraged relaxation breathing techniques."
+17. Diagnostic interventions must contain assessment/monitoring/documentation actions.
+18. Therapeutic interventions must contain actual nursing care actions already done.
+19. Educative interventions must contain teaching/health instruction already given.
+20. If labor-related data is present, consider Bishop’s score, fetal heart rate, and uterine contractions.
+21. Return VALID JSON only.
+22. No markdown. No code fences.
 
 JSON keys must be exactly:
 topDiagnoses
 primaryDiagnosis
 rationaleNotes
 nocOutcomes
-nicInterventions
-implementationSuggestions
+diagnosticInterventions
+therapeuticInterventions
+educativeInterventions
 shortTermGoal
 longTermGoal
 
@@ -183,8 +193,9 @@ VALUE RULES:
 - primaryDiagnosis: string
 - rationaleNotes: string
 - nocOutcomes: array of 3 to 6 strings
-- nicInterventions: array of 4 to 8 strings
-- implementationSuggestions: array of 4 to 8 strings
+- diagnosticInterventions: array of 2 to 6 strings
+- therapeuticInterventions: array of 2 to 6 strings
+- educativeInterventions: array of 2 to 6 strings
 - shortTermGoal: string
 - longTermGoal: string
 
@@ -225,8 +236,9 @@ ${JSON.stringify(clinicalData, null, 2)}
       primaryDiagnosis,
       rationaleNotes: cleanText(parsed.rationaleNotes, 1500),
       nocOutcomes: cleanArray(parsed.nocOutcomes, 280, 6),
-      nicInterventions: cleanArray(parsed.nicInterventions, 320, 8),
-      implementationSuggestions: cleanArray(parsed.implementationSuggestions, 320, 8),
+      diagnosticInterventions: cleanArray(parsed.diagnosticInterventions, 320, 6),
+      therapeuticInterventions: cleanArray(parsed.therapeuticInterventions, 320, 6),
+      educativeInterventions: cleanArray(parsed.educativeInterventions, 320, 6),
       shortTermGoal: cleanText(parsed.shortTermGoal, 900),
       longTermGoal: cleanText(parsed.longTermGoal, 900)
     });
@@ -239,5 +251,5 @@ ${JSON.stringify(clinicalData, null, 2)}
 });
 
 app.listen(PORT, () => {
-  console.log(`Secure NCP backend listening on http://localhost:${PORT}`);
+  console.log(\`Secure NCP backend listening on http://localhost:\${PORT}\`);
 });
