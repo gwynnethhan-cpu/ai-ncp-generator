@@ -82,25 +82,73 @@ function validateCaseInput(body) {
       patientReceivedCondition: cleanText(body.patientReceivedCondition, 1200),
       subjectiveData: cleanText(body.subjectiveData, 2200),
       objectiveData: cleanText(body.objectiveData, 2200),
+
       temperature: cleanText(body.temperature, 50),
       bloodPressure: cleanText(body.bloodPressure, 50),
       heartRate: cleanText(body.heartRate, 50),
       respiratoryRate: cleanText(body.respiratoryRate, 50),
       oxygenSaturation: cleanText(body.oxygenSaturation, 50),
+
       fhr: cleanText(body.fhr, 50),
       contractionType: cleanText(body.contractionType, 100),
       contractionIntensity: cleanText(body.contractionIntensity, 100),
       contractionFrequency: cleanText(body.contractionFrequency, 100),
       contractionDuration: cleanText(body.contractionDuration, 100),
+
       bishopPosition: cleanText(body.bishopPosition, 20),
       bishopConsistency: cleanText(body.bishopConsistency, 20),
       bishopEffacement: cleanText(body.bishopEffacement, 20),
       bishopDilation: cleanText(body.bishopDilation, 20),
       bishopStation: cleanText(body.bishopStation, 20),
       bishopScore: cleanText(body.bishopScore, 20),
+
       medications: sanitizeMedications(body.medications)
     }
   };
+}
+
+function ensureEtiology(primaryDiagnosis) {
+  const dx = cleanText(primaryDiagnosis, 800);
+  const lower = dx.toLowerCase();
+
+  const hasEtiology =
+    lower.includes(" related to ") ||
+    lower.includes(" r/t ") ||
+    lower.includes("secondary to");
+
+  if (hasEtiology) return dx;
+
+  return `${dx} related to insufficient supporting data for exact etiologic statement`;
+}
+
+function fallbackInterventions(arr, type) {
+  if (Array.isArray(arr) && arr.length > 0) return arr;
+
+  if (type === "diagnostic") {
+    return [
+      "Monitored vital signs and fetal heart rate.",
+      "Assessed contraction pattern, frequency, duration, and intensity.",
+      "Documented cervical findings and Bishop’s score."
+    ];
+  }
+
+  if (type === "therapeutic") {
+    return [
+      "Positioned the patient for comfort and optimal uteroplacental perfusion.",
+      "Provided supportive measures during contractions.",
+      "Administered prescribed medications as ordered."
+    ];
+  }
+
+  if (type === "educative") {
+    return [
+      "Explained the labor process and expected maternal responses.",
+      "Instructed the patient on breathing and relaxation techniques.",
+      "Reinforced the importance of reporting changes in pain, bleeding, or fetal movement."
+    ];
+  }
+
+  return [];
 }
 
 app.get("/", (_req, res) => {
@@ -150,28 +198,27 @@ STRICT RULES:
 3. Understand common medical abbreviations in objective nursing data.
 4. Generate TOP 3 possible NANDA nursing diagnoses in order of best fit.
 5. Select ONE primary diagnosis from the top 3.
-6. When supported, write the primary diagnosis in this style:
-   "Problem related to [related factors] secondary to [condition if clearly supported] as evidenced by [signs/symptoms/cues]"
-7. If "secondary to" is not supported, omit it.
-8. If "as evidenced by" is not supported, omit it.
-9. Goals must be SMART, realistic, measurable, and appropriate to the case.
-10. Short-term goal must begin exactly with:
+6. The primary diagnosis must be written in full clinical nursing format whenever data supports it:
+   "Problem related to [etiology] secondary to [condition if supported] as evidenced by [signs/symptoms/cues]"
+7. If exact etiology is uncertain, still provide a reasonable "related to" statement based on the available cues.
+8. Goals must be SMART, realistic, measurable, and appropriate to the case.
+9. Short-term goal must begin exactly with:
    "At the end of the 8 hour shift..."
-11. Long-term goal must begin exactly with:
+10. Long-term goal must begin exactly with:
    "After"
-12. Provide NOC outcomes.
-13. Provide intervention suggestions in THREE GROUPS only:
+11. Provide NOC outcomes.
+12. Provide interventions grouped EXACTLY into:
    - diagnosticInterventions
    - therapeuticInterventions
    - educativeInterventions
-14. Every intervention must be in PAST TENSE.
-15. The FIRST WORD of every intervention must be a past-tense nursing verb.
-16. Diagnostic interventions must contain assessment, monitoring, observation, or documentation actions.
-17. Therapeutic interventions must contain actual nursing care actions already done.
-18. Educative interventions must contain teaching or health instruction already given.
-19. If labor-related data is present, consider Bishop’s score, fetal heart rate, and uterine contractions.
-20. Return VALID JSON only.
-21. No markdown. No code fences.
+13. Every intervention must be in PAST TENSE.
+14. The FIRST WORD of every intervention must be a past-tense nursing verb.
+15. Diagnostic interventions must include assessment, observation, monitoring, or documentation actions.
+16. Therapeutic interventions must include actual nursing actions already DONE.
+17. Educative interventions must include teaching or health instructions already GIVEN.
+18. If labor-related data is present, consider Bishop’s score, fetal heart rate, and uterine contractions.
+19. Return VALID JSON only.
+20. No markdown. No code fences.
 
 JSON keys must be exactly:
 topDiagnoses
@@ -210,51 +257,6 @@ ${JSON.stringify(clinicalData, null, 2)}
 
     const text = (response.text || "").trim();
     const parsed = JSON.parse(text);
-let primaryDiagnosis = cleanText(parsed.primaryDiagnosis || topDiagnoses[0], 800);
-
-// FORCE r/t FORMAT IF MISSING
-if (!primaryDiagnosis.toLowerCase().includes("related to") &&
-    !primaryDiagnosis.toLowerCase().includes("r/t")) {
-
-  primaryDiagnosis = `${primaryDiagnosis} related to insufficient supporting data (AI-generated placeholder — review and refine)`;
-}
-    let topDiagnoses = cleanArray(parsed.topDiagnoses, 260, 3);
-
-    if (topDiagnoses.length < 3) {
-      const primary = cleanText(parsed.primaryDiagnosis, 500);
-      topDiagnoses = [
-        primary || "Review assessment cues for a primary NANDA diagnosis",
-        "Risk for complications related to current clinical condition",
-        "Further focused assessment may support another NANDA diagnosis"
-      ].slice(0, 3);
-    }
-
-    let primaryDiagnosis = cleanText(parsed.primaryDiagnosis || topDiagnoses[0], 800);
-    if (!primaryDiagnosis) {
-      primaryDiagnosis = topDiagnoses[0];
-    }
-
-    res.json({
-      topDiagnoses,
-      primaryDiagnosis,
-      rationaleNotes: cleanText(parsed.rationaleNotes, 1500),
-      nocOutcomes: cleanArray(parsed.nocOutcomes, 280, 6),
-      diagnosticInterventions: cleanArray(parsed.diagnosticInterventions, 320, 6),
-      therapeuticInterventions: cleanArray(parsed.therapeuticInterventions, 320, 6),
-      educativeInterventions: cleanArray(parsed.educativeInterventions, 320, 6),
-      shortTermGoal: cleanText(parsed.shortTermGoal, 900),
-      longTermGoal: cleanText(parsed.longTermGoal, 900)
-    });
-  } catch (error) {
-    console.error("Gemini error:", error);
-    res.status(500).json({
-      error: error?.message || "Gemini generation failed"
-    });
-  }
-});
-
-    const text = (response.text || "").trim();
-    const parsed = JSON.parse(text);
 
     let topDiagnoses = cleanArray(parsed.topDiagnoses, 260, 3);
 
@@ -272,14 +274,16 @@ if (!primaryDiagnosis.toLowerCase().includes("related to") &&
       primaryDiagnosis = topDiagnoses[0];
     }
 
+    primaryDiagnosis = ensureEtiology(primaryDiagnosis);
+
     res.json({
       topDiagnoses,
       primaryDiagnosis,
       rationaleNotes: cleanText(parsed.rationaleNotes, 1500),
       nocOutcomes: cleanArray(parsed.nocOutcomes, 280, 6),
-      diagnosticInterventions: cleanArray(parsed.diagnosticInterventions, 320, 6),
-      therapeuticInterventions: cleanArray(parsed.therapeuticInterventions, 320, 6),
-      educativeInterventions: cleanArray(parsed.educativeInterventions, 320, 6),
+      diagnosticInterventions: fallbackInterventions(parsed.diagnosticInterventions, "diagnostic"),
+      therapeuticInterventions: fallbackInterventions(parsed.therapeuticInterventions, "therapeutic"),
+      educativeInterventions: fallbackInterventions(parsed.educativeInterventions, "educative"),
       shortTermGoal: cleanText(parsed.shortTermGoal, 900),
       longTermGoal: cleanText(parsed.longTermGoal, 900)
     });
@@ -292,5 +296,5 @@ if (!primaryDiagnosis.toLowerCase().includes("related to") &&
 });
 
 app.listen(PORT, () => {
-  console.log(\`Secure NCP backend listening on http://localhost:\${PORT}\`);
+  console.log(`Secure NCP backend listening on http://localhost:${PORT}`);
 });
