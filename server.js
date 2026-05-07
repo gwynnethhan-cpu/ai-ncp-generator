@@ -232,7 +232,11 @@ DE-IDENTIFIED CLINICAL DATA:
 ${JSON.stringify(clinicalData, null, 2)}
 `;
 
-    const response = await ai.models.generateContent({
+    let response;
+
+for (let attempt = 1; attempt <= 3; attempt++) {
+  try {
+    response = await ai.models.generateContent({
       model: "gemini-2.5-flash-lite",
       contents: prompt,
       config: {
@@ -240,6 +244,16 @@ ${JSON.stringify(clinicalData, null, 2)}
         responseMimeType: "application/json"
       }
     });
+
+    break;
+  } catch (err) {
+    if (attempt === 3) throw err;
+
+    await new Promise(resolve =>
+      setTimeout(resolve, 2000 * attempt)
+    );
+  }
+}
 
     const text = (response.text || "").trim();
     const parsed = JSON.parse(text);

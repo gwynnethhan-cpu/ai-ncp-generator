@@ -839,11 +839,6 @@
       </div>
 
       <div class="soft-box">
-        <label for="nocOutcomes">NOC Outcomes</label>
-        <textarea id="nocOutcomes"></textarea>
-      </div>
-
-      <div class="soft-box">
         <label for="diagnosticInterventions">Diagnostic Interventions</label>
         <textarea id="diagnosticInterventions"></textarea>
       </div>
@@ -856,11 +851,6 @@
       <div class="soft-box">
         <label for="educativeInterventions">Educative Interventions</label>
         <textarea id="educativeInterventions"></textarea>
-      </div>
-
-      <div class="soft-box">
-        <label for="interventionDone">Intervention Done</label>
-        <textarea id="interventionDone" placeholder="Type additional interventions done here if needed."></textarea>
       </div>
 
       <div class="soft-box">
@@ -955,11 +945,9 @@
         <tr><th colspan="2" style="text-align:center;">PLANNING AND INTERVENTION</th></tr>
         <tr><th>Short-Term Goal</th><td id="sumShortGoal"></td></tr>
         <tr><th>Long-Term Goal</th><td id="sumLongGoal"></td></tr>
-        <tr><th>NOC Outcomes</th><td id="sumNocOutcomes"></td></tr>
         <tr><th>Diagnostic Interventions</th><td id="sumDiagnosticInterventions"></td></tr>
         <tr><th>Therapeutic Interventions</th><td id="sumTherapeuticInterventions"></td></tr>
         <tr><th>Educative Interventions</th><td id="sumEducativeInterventions"></td></tr>
-        <tr><th>Intervention Done</th><td id="sumInterventionDone"></td></tr>
         <tr><th>Medications</th><td id="sumMedications"></td></tr>
 
         <tr><th colspan="2" style="text-align:center;">EVALUATION</th></tr>
@@ -1320,9 +1308,6 @@
         : "";
       document.getElementById("primaryDiagnosis").value = result.primaryDiagnosis || "";
       document.getElementById("rationaleNotes").value = result.rationaleNotes || "";
-      document.getElementById("nocOutcomes").value = Array.isArray(result.nocOutcomes)
-        ? result.nocOutcomes.join("\n")
-        : "";
       document.getElementById("diagnosticInterventions").value = Array.isArray(result.diagnosticInterventions)
         ? result.diagnosticInterventions.join("\n")
         : "";
@@ -1404,11 +1389,9 @@
 
       document.getElementById("sumShortGoal").innerHTML = bullets(val("shortTermGoal"));
       document.getElementById("sumLongGoal").innerHTML = bullets(val("longTermGoal"));
-      document.getElementById("sumNocOutcomes").innerHTML = bullets(val("nocOutcomes"));
       document.getElementById("sumDiagnosticInterventions").innerHTML = bullets(val("diagnosticInterventions"));
       document.getElementById("sumTherapeuticInterventions").innerHTML = bullets(val("therapeuticInterventions"));
       document.getElementById("sumEducativeInterventions").innerHTML = bullets(val("educativeInterventions"));
-      document.getElementById("sumInterventionDone").innerHTML = bullets(val("interventionDone"));
       document.getElementById("sumMedications").innerHTML = bullets(meds);
 
       document.getElementById("sumEvalStatus").textContent = safe(getEvaluationStatus());
@@ -1460,8 +1443,8 @@
         "contractionType","contractionIntensity","contractionFrequency","contractionDuration",
         "bishopPosition","bishopConsistency","bishopEffacement","bishopDilation","bishopStation","bishopScore",
         "subjectiveData","objectiveData","topDiagnoses","primaryDiagnosis","rationaleNotes",
-        "nocOutcomes","diagnosticInterventions","therapeuticInterventions","educativeInterventions",
-        "shortTermGoal","longTermGoal","interventionDone",
+        "diagnosticInterventions","therapeuticInterventions","educativeInterventions",
+        "shortTermGoal","longTermGoal",
         "evaluationNotes","nurseFullName","checkedByName","privacyAgree"
       ];
 
