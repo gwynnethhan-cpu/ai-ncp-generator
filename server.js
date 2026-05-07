@@ -33,10 +33,6 @@ function authMiddleware(req, res, next) {
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  const session = sessions.get(token);
-  session.lastSeen = Date.now();
-  sessions.set(token, session);
-
   next();
 }
 
@@ -44,12 +40,9 @@ function cleanText(text, limit = 1500) {
   return (text || "").toString().trim().slice(0, limit);
 }
 
-function cleanArray(arr, itemLimit = 300, maxItems = 10) {
+function cleanArray(arr, itemLimit = 320, maxItems = 10) {
   if (!Array.isArray(arr)) return [];
-  return arr
-    .map(item => cleanText(item, itemLimit))
-    .filter(Boolean)
-    .slice(0, maxItems);
+  return arr.map(x => cleanText(x, itemLimit)).filter(Boolean).slice(0, maxItems);
 }
 
 function sanitizeMedications(meds) {
@@ -61,15 +54,11 @@ function sanitizeMedications(meds) {
     frequency: cleanText(med?.frequency, 80),
     time: cleanText(med?.time, 80),
     type: cleanText(med?.type, 40)
-  })).filter(m =>
-    m.name || m.dose || m.route || m.frequency || m.time || m.type
-  );
+  })).filter(m => m.name || m.dose || m.route || m.frequency || m.time || m.type);
 }
 
 function validateCaseInput(body) {
-  if (!body) {
-    return { ok: false, error: "Missing request body" };
-  }
+  if (!body) return { ok: false, error: "Missing request body" };
 
   return {
     ok: true,
@@ -82,43 +71,40 @@ function validateCaseInput(body) {
       patientReceivedCondition: cleanText(body.patientReceivedCondition, 1200),
       subjectiveData: cleanText(body.subjectiveData, 2200),
       objectiveData: cleanText(body.objectiveData, 2200),
-
       temperature: cleanText(body.temperature, 50),
       bloodPressure: cleanText(body.bloodPressure, 50),
       heartRate: cleanText(body.heartRate, 50),
       respiratoryRate: cleanText(body.respiratoryRate, 50),
       oxygenSaturation: cleanText(body.oxygenSaturation, 50),
-
       fhr: cleanText(body.fhr, 50),
       contractionType: cleanText(body.contractionType, 100),
       contractionIntensity: cleanText(body.contractionIntensity, 100),
       contractionFrequency: cleanText(body.contractionFrequency, 100),
       contractionDuration: cleanText(body.contractionDuration, 100),
-
       bishopPosition: cleanText(body.bishopPosition, 20),
       bishopConsistency: cleanText(body.bishopConsistency, 20),
       bishopEffacement: cleanText(body.bishopEffacement, 20),
       bishopDilation: cleanText(body.bishopDilation, 20),
       bishopStation: cleanText(body.bishopStation, 20),
       bishopScore: cleanText(body.bishopScore, 20),
-
       medications: sanitizeMedications(body.medications)
     }
   };
 }
 
-function ensureEtiology(primaryDiagnosis) {
-  const dx = cleanText(primaryDiagnosis, 800);
-  const lower = dx.toLowerCase();
+function ensureEtiology(dx) {
+  const text = cleanText(dx, 800);
+  const lower = text.toLowerCase();
 
-  const hasEtiology =
+  if (
     lower.includes(" related to ") ||
     lower.includes(" r/t ") ||
-    lower.includes("secondary to");
+    lower.includes("secondary to")
+  ) {
+    return text;
+  }
 
-  if (hasEtiology) return dx;
-
-  return `${dx} related to insufficient supporting data for exact etiologic statement`;
+  return `${text} related to identified clinical cues requiring further nursing validation`;
 }
 
 function fallbackInterventions(arr, type) {
@@ -126,9 +112,9 @@ function fallbackInterventions(arr, type) {
 
   if (type === "diagnostic") {
     return [
-      "Monitored vital signs and fetal heart rate.",
+      "Monitored maternal vital signs and fetal heart rate.",
       "Assessed contraction pattern, frequency, duration, and intensity.",
-      "Documented cervical findings and Bishop’s score."
+      "Documented cervical findings, Bishop’s score, and labor progress."
     ];
   }
 
@@ -144,7 +130,7 @@ function fallbackInterventions(arr, type) {
     return [
       "Explained the labor process and expected maternal responses.",
       "Instructed the patient on breathing and relaxation techniques.",
-      "Reinforced the importance of reporting changes in pain, bleeding, or fetal movement."
+      "Reinforced the importance of reporting increased pain, bleeding, or decreased fetal movement."
     ];
   }
 
@@ -190,41 +176,42 @@ app.post("/generate-ncp", authMiddleware, aiLimiter, async (req, res) => {
 
   try {
     const prompt = `
-You are assisting with an educational nursing care plan for a labor and delivery nursing context when applicable.
+You are an advanced clinical nursing assistant generating a professional nursing care plan using NANDA-based terminology.
 
-STRICT RULES:
-1. Use only the provided data.
-2. Do not invent unsupported facts.
-3. Understand common medical abbreviations in objective nursing data.
-4. Generate TOP 3 possible NANDA nursing diagnoses in order of best fit.
-5. Select ONE primary diagnosis from the top 3.
-6. The primary diagnosis must be written in full clinical nursing format whenever data supports it:
-   "Problem related to [etiology] secondary to [condition if supported] as evidenced by [signs/symptoms/cues]"
-7. If exact etiology is uncertain, still provide a reasonable "related to" statement based on the available cues.
-8. Goals must be SMART, realistic, measurable, and appropriate to the case.
-9. Short-term goal must begin exactly with:
+STRICT INSTRUCTIONS:
+1. Use ONLY the clinical data provided.
+2. Do NOT invent unsupported symptoms, diagnoses, or conditions.
+3. Interpret common medical abbreviations correctly.
+4. Generate TOP 3 prioritized NANDA nursing diagnoses.
+5. Prioritize actual/physiologic problems first, then risk/safety problems, then psychosocial problems.
+6. The PRIMARY nursing diagnosis MUST follow this format:
+   "Problem related to [etiology] secondary to [condition if supported] as evidenced by [subjective/objective cues]"
+7. If exact etiology is uncertain, still provide a reasonable "related to" statement based on available cues.
+8. Do NOT include NOC outcomes.
+9. SMART goals must be measurable, realistic, nursing-focused, and clinically achievable.
+10. Short-term goal MUST begin exactly with:
    "At the end of the 8 hour shift..."
-10. Long-term goal must begin exactly with:
+11. Long-term goal MUST begin exactly with:
    "After"
-11. Provide NOC outcomes.
-12. Provide interventions grouped EXACTLY into:
-   - diagnosticInterventions
-   - therapeuticInterventions
-   - educativeInterventions
-13. Every intervention must be in PAST TENSE.
+12. Interventions MUST be grouped EXACTLY into:
+   diagnosticInterventions
+   therapeuticInterventions
+   educativeInterventions
+13. ALL interventions must be in PAST TENSE.
 14. The FIRST WORD of every intervention must be a past-tense nursing verb.
-15. Diagnostic interventions must include assessment, observation, monitoring, or documentation actions.
-16. Therapeutic interventions must include actual nursing actions already DONE.
-17. Educative interventions must include teaching or health instructions already GIVEN.
-18. If labor-related data is present, consider Bishop’s score, fetal heart rate, and uterine contractions.
-19. Return VALID JSON only.
-20. No markdown. No code fences.
+15. Diagnostic interventions must include assessment, monitoring, observation, or documentation actions.
+16. Therapeutic interventions must include nursing care already performed, comfort measures, positioning, medication administration, oxygenation, or labor support.
+17. Educative interventions must include patient teaching, breathing techniques, health education, or discharge-related instructions already given.
+18. If labor-related findings exist, analyze contractions, FHR, Bishop’s score, and labor progression cues.
+19. Make the language professional, clinical, and nursing-documentation appropriate.
+20. Avoid generic AI wording.
+21. Return VALID JSON ONLY.
+22. No markdown. No code blocks.
 
-JSON keys must be exactly:
+JSON KEYS:
 topDiagnoses
 primaryDiagnosis
 rationaleNotes
-nocOutcomes
 diagnosticInterventions
 therapeuticInterventions
 educativeInterventions
@@ -235,10 +222,9 @@ VALUE RULES:
 - topDiagnoses: array of exactly 3 strings
 - primaryDiagnosis: string
 - rationaleNotes: string
-- nocOutcomes: array of 3 to 6 strings
-- diagnosticInterventions: array of 2 to 6 strings
-- therapeuticInterventions: array of 2 to 6 strings
-- educativeInterventions: array of 2 to 6 strings
+- diagnosticInterventions: array of 3 to 6 strings
+- therapeuticInterventions: array of 3 to 6 strings
+- educativeInterventions: array of 3 to 6 strings
 - shortTermGoal: string
 - longTermGoal: string
 
@@ -250,7 +236,7 @@ ${JSON.stringify(clinicalData, null, 2)}
       model: "gemini-2.5-flash",
       contents: prompt,
       config: {
-        temperature: 0.15,
+        temperature: 0.1,
         responseMimeType: "application/json"
       }
     });
@@ -258,29 +244,24 @@ ${JSON.stringify(clinicalData, null, 2)}
     const text = (response.text || "").trim();
     const parsed = JSON.parse(text);
 
-    let topDiagnoses = cleanArray(parsed.topDiagnoses, 260, 3);
+    let topDiagnoses = cleanArray(parsed.topDiagnoses, 280, 3);
 
     if (topDiagnoses.length < 3) {
       const primary = cleanText(parsed.primaryDiagnosis, 500);
       topDiagnoses = [
         primary || "Review assessment cues for a primary NANDA diagnosis",
-        "Risk for complications related to current clinical condition",
+        "Risk for maternal or fetal compromise related to current labor condition",
         "Further focused assessment may support another NANDA diagnosis"
       ].slice(0, 3);
     }
 
-    let primaryDiagnosis = cleanText(parsed.primaryDiagnosis || topDiagnoses[0], 800);
-    if (!primaryDiagnosis) {
-      primaryDiagnosis = topDiagnoses[0];
-    }
-
+    let primaryDiagnosis = cleanText(parsed.primaryDiagnosis || topDiagnoses[0], 900);
     primaryDiagnosis = ensureEtiology(primaryDiagnosis);
 
     res.json({
       topDiagnoses,
       primaryDiagnosis,
-      rationaleNotes: cleanText(parsed.rationaleNotes, 1500),
-      nocOutcomes: cleanArray(parsed.nocOutcomes, 280, 6),
+      rationaleNotes: cleanText(parsed.rationaleNotes, 1600),
       diagnosticInterventions: fallbackInterventions(parsed.diagnosticInterventions, "diagnostic"),
       therapeuticInterventions: fallbackInterventions(parsed.therapeuticInterventions, "therapeutic"),
       educativeInterventions: fallbackInterventions(parsed.educativeInterventions, "educative"),
